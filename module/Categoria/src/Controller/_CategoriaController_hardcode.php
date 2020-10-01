@@ -1,8 +1,11 @@
 <?php
 namespace Categoria\Controller;
 
+//use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Mvc\Controller\AbstractRestfulController;
 use Zend\View\Model\JsonModel;
+use Zend\Json\Json as Json;
+
 
 class CategoriaController extends AbstractRestfulController
 {
@@ -22,11 +25,6 @@ class CategoriaController extends AbstractRestfulController
         // if ($request->isPost()) {
         // }
         try {
-
-            /** Get max id */
-            // $jsondata = file_get_contents($this->categorias);
-            // $arr_data = json_decode($jsondata, true);
-
             $item = [
                 'id' => '1',
                 'name' => 'teste 1'
@@ -69,43 +67,17 @@ class CategoriaController extends AbstractRestfulController
 
     public function deleteAction()
     {
-        $jsondata = file_get_contents($this->categorias);
-        $arrdata = json_decode($jsondata, true);
-
-        $arrdata = array_filter($arrdata,function($a){
-            $id = $this->params()->fromRoute('id');
-            return ($id != $a['id'])? $id : false;
-        });
-
-        try {
-
-            $jsondata = json_encode($arrdata, JSON_PRETTY_PRINT);
-
-            if(file_put_contents($this->categorias, $jsondata)) {
-                return new JsonModel(array('success' => "Categoria deletada com sucesso"));
-            }else{
-                return new JsonModel(array('error' => 'Erro ao deletar categoria'));    
-            }
-
-        } catch (\InvalidArgumentException $e) {
-            return new JsonModel(array('error' => "Ocorreu um erro"));
-        }
-
-
     }
 
     public function searchAction()
     {
-
+        $q = $this->params()->fromRoute('q');
         $jsondata = file_get_contents($this->categorias);
         $arr_data = json_decode($jsondata, true);
 
-        $arr_data = array_filter($arr_data,function($a){
-            $q = $this->params()->fromRoute('q');
-            return preg_match("/.*$q.*/",$a['name']);
-        });
+        $result = array_search($q, array_column($arr_data, 'name'));
 
-        return new JsonModel(array('query' => $this->params()->fromRoute('q') ,'result' => $arr_data));
+        return new JsonModel(array('query' => $q ,'result' => $result));
     }
-
+    
 }
