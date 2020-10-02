@@ -1,111 +1,144 @@
 <?php
 namespace Categoria\Controller;
 
+use DateTime;
 use Zend\Mvc\Controller\AbstractRestfulController;
 use Zend\View\Model\JsonModel;
 
 class CategoriaController extends AbstractRestfulController
 {
-    private $categorias  = "./data/categorias.json";
+    private $categoriaspath  = "./data/categorias.json";
 
     public function indexAction()
     {
-        $jsondata = file_get_contents($this->categorias);
-        $arr_data = json_decode($jsondata, true);
-
-        return new JsonModel(array('data' => $arr_data));
+        $arrdata = $this->readCategorias();
+        return new JsonModel(array('data' => $arrdata));
     }
 
     public function addAction()
     {
-        // $request = $this->getRequest();
-        // if ($request->isPost()) {
-        // }
-        try {
+        $request = $this->getRequest();
+        if (!$request->isPost())
+           return new JsonModel(array('error' => 'method not allowed'));   
 
-            /** Get max id */
-            // $jsondata = file_get_contents($this->categorias);
-            // $arr_data = json_decode($jsondata, true);
+        $arrdata = $this->readCategorias();
 
-            $item = [
-                'id' => '1',
-                'name' => 'teste 1'
-            ];
-            $jsondata = file_get_contents($this->categorias);
-            $arrdata = json_decode($jsondata, true);
+        $ids = array_column($arrdata, 'id');
+        $next = (max($ids) + 1) ?? 1 ;
 
-            if(!is_array($arrdata))
-                $arrdata = [];
+        $datetime = new DateTime('NOW');
 
-            array_push($arrdata,$item);
-            $jsondata = json_encode($arrdata, JSON_PRETTY_PRINT);
+        $item = [
+            'id' => $next,
+            'name' => $request['name'],
+            'created' => $datetime->format('Y-m-d H:i:s'),
+            'modified' => $datetime->format('Y-m-d H:i:s')
+        ];
+        array_push($arrdata,$item);
 
-            if(file_put_contents($this->categorias, $jsondata)) {
-                return new JsonModel(array('success' => "Categoria salva com sucesso"));
-            }else{
-                return new JsonModel(array('error' => 'Erro ao salvar categoria'));    
-            }
-
-        } catch (\InvalidArgumentException $e) {
-            return new JsonModel(array('error' => "Ocorreu um erro"));
+        if($this->storeCategorias($arrdata)){
+            return new JsonModel(array('success' => "Categoria salva com sucesso"));
+        }else{
+            return new JsonModel(array('error' => 'Erro ao salvar categoria'));    
         }
-
 
     }
 
     public function editAction()
     {
-        $request = $this->getRequest();
         $id = $this->params()->fromRoute('id');
-        try {
-            
-        } catch (\InvalidArgumentException $ex) {
-            // Logger $e->getMessage()
-            return new JsonModel(array('error' => "Ocorreu um erro"));
-        }
+        $request = $this->getRequest();
+        if (!$request->isPost())
+            return new JsonModel(array('error' => 'method not allowed'));    
         
-        return new JsonModel(array('data' => "Edit ".$id));
+        $arrdata = $this->readCategorias();
+
+        $datetime = new DateTime('NOW');
+
+        $arrdata = array_map(function($k) use ($request, $id, $datetime){
+            if($id == $k['id']){
+                $k['name'] = $request['name'];
+                $k['modified'] = $datetime->format('Y-m-d H:i:s');
+            }
+            return $k;
+        },$arrdata);
+
+        if($this->storeCategorias($arrdata)){
+            return new JsonModel(array('success' => "Categoria alterada com sucesso"));
+        }else{
+            return new JsonModel(array('error' => 'Erro ao deletar categoria'));    
+        }
     }
 
     public function deleteAction()
     {
-        $jsondata = file_get_contents($this->categorias);
-        $arrdata = json_decode($jsondata, true);
+        $id = $this->params()->fromRoute('id');
+        $arrdata = $this->readCategorias();
 
-        $arrdata = array_filter($arrdata,function($a){
-            $id = $this->params()->fromRoute('id');
+        $arrdata = array_filter($arrdata,function($a) use($id){
             return ($id != $a['id'])? $id : false;
         });
 
-        try {
-
-            $jsondata = json_encode($arrdata, JSON_PRETTY_PRINT);
-
-            if(file_put_contents($this->categorias, $jsondata)) {
-                return new JsonModel(array('success' => "Categoria deletada com sucesso"));
-            }else{
-                return new JsonModel(array('error' => 'Erro ao deletar categoria'));    
-            }
-
-        } catch (\InvalidArgumentException $e) {
-            return new JsonModel(array('error' => "Ocorreu um erro"));
+        if($this->storeCategorias($arrdata)){
+            return new JsonModel(array('success' => "Categoria deletada com sucesso"));
+        }else{
+            return new JsonModel(array('error' => 'Erro ao deletar categoria'));    
         }
-
 
     }
 
     public function searchAction()
     {
+        $request = $this->getRequest();
+        if (!$request->isPost())
+           return new JsonModel(array('error' => 'method not allowed'));    
+        
+        $arrdata = $this->readCategorias();
 
-        $jsondata = file_get_contents($this->categorias);
-        $arr_data = json_decode($jsondata, true);
-
-        $arr_data = array_filter($arr_data,function($a){
-            $q = $this->params()->fromRoute('q');
-            return preg_match("/.*$q.*/",$a['name']);
+        $arrdata = array_filter($arrdata,function($a) use($request){
+            return preg_match("/.*{$request['q']}.*/",$a['name']);
         });
 
-        return new JsonModel(array('query' => $this->params()->fromRoute('q') ,'result' => $arr_data));
+        return new JsonModel(array('query' => $this->params()->fromRoute('q') ,'result' => $arrdata));
     }
+
+    /**
+     * Função para ler do arquivo json
+     */
+    private function readCategorias(){
+        try {
+            $jsondata = file_get_contents($this->categoriaspath);
+            $data = json_decode($jsondata, true);
+
+            if(!is_array($data))
+                    $data = [];
+
+            return $data;
+        } catch (\InvalidArgumentException $e) {
+            return array([]);
+        }
+        return array([]);
+    }
+
+    /**
+     * Função para escrever no arquivo json
+     */
+    private function storeCategorias($data){
+        try {
+            $jsondata = json_encode($data, JSON_PRETTY_PRINT);
+            if(file_put_contents($this->categoriaspath, $jsondata)) {
+                return true;
+            }
+
+        } catch (\InvalidArgumentException $e) {
+            return false;
+        }
+        return false;
+    }
+
+
+                /** Get max id */
+            // $jsondata = file_get_contents($this->categorias);
+            // $arr_data = json_decode($jsondata, true);
 
 }

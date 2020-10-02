@@ -37,19 +37,7 @@ return [
                     ],
                 ],
             ],
-            'search' => [
-                'type'    => Segment::class,
-                'options' => [
-                    'route'    => '/search/:q',
-                    'constraints' => [
-                        'q' => '.*'
-                    ],
-                    'defaults' => [
-                        'controller' => Controller\CategoriaController::class,
-                        'action'     => 'search',
-                    ],
-                ],
-            ],
+
         ],
     ],
     'view_manager' => [

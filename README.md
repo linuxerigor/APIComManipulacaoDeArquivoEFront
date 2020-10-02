@@ -27,3 +27,14 @@ ESTRUTURA:
 | modified      | datetime      |
 
 
+## Sobre o código
+
+1 - Instalar as bibliotecas do zend
+```bash
+compose install
+```
+
+2 - Executar o docker para levar o servidor web
+```bash
+docker-compose up -d
+```
