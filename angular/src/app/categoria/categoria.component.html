@@ -1,1 +1,27 @@
-<p>categoria works!</p>
+
+<a type="button" class="btn btn-primary float-right mb-3" routerLink="/categoria/add">Adicionar</a>
+
+<ngb-alert *ngIf="loading" type="secondary">
+  <strong>À carregar</strong> aguarde!
+</ngb-alert>
+
+<table class="table table-striped" *ngIf="!loading" >
+  <thead>
+  <tr>
+    <th scope="col">#</th>
+    <th scope="col">Name</th>
+    <th scope="col">Created</th>
+    <th scope="col">Modified</th>
+    <th scope="col">Action</th>
+  </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let item of categorias; index as i">
+      <th scope="row"><a role="button" routerLink="" (click)="edit(item)">{{ item.id }}</a></th>
+      <td>{{ item.name }}</td>
+      <td>{{ item.created }}</td>
+      <td>{{ item.modified }}</td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>

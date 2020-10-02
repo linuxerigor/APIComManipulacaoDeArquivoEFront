@@ -15,7 +15,7 @@ class CategoriaController extends AbstractRestfulController
     public function indexAction()
     {
         $arrdata = $this->readCategorias();
-        return new JsonModel(array('data' => $arrdata));
+        return new JsonModel($arrdata);
     }
 
     /**
@@ -25,10 +25,11 @@ class CategoriaController extends AbstractRestfulController
      */
     public function addAction()
     {
-        $request = $this->getRequest();
-        if (!$request->isPost())
-           return new JsonModel(array('error' => 'method not allowed'));   
+        $name = $this->request->getContent();
+        if(!$name)
+            return new JsonModel(array('error' => 'method not allowed'));   
 
+     
         $arrdata = $this->readCategorias();
 
         $ids = array_column($arrdata, 'id');
@@ -38,7 +39,7 @@ class CategoriaController extends AbstractRestfulController
 
         $item = [
             'id' => $next,
-            'name' => $request['name'],
+            'name' => $name,
             'created' => $datetime->format('Y-m-d H:i:s'),
             'modified' => $datetime->format('Y-m-d H:i:s')
         ];
