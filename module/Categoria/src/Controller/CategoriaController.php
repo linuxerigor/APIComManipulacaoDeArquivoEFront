@@ -9,12 +9,20 @@ class CategoriaController extends AbstractRestfulController
 {
     private $categoriaspath  = "./data/categorias.json";
 
+    /**
+     * Função para exibir todas as categorias
+     */
     public function indexAction()
     {
         $arrdata = $this->readCategorias();
         return new JsonModel(array('data' => $arrdata));
     }
 
+    /**
+     * Função para adicionar uma nova categoria
+     * @Input
+     *     name: String
+     */
     public function addAction()
     {
         $request = $this->getRequest();
@@ -44,6 +52,13 @@ class CategoriaController extends AbstractRestfulController
 
     }
 
+    /**
+     * Função para alterar uma categoria
+     * @Input
+     *     id: Int
+     * @Post
+     *     name: String
+     */
     public function editAction()
     {
         $id = $this->params()->fromRoute('id');
@@ -70,6 +85,11 @@ class CategoriaController extends AbstractRestfulController
         }
     }
 
+    /**
+     * Função para excluir uma categoria
+     * @Input
+     *     id: Int
+     */
     public function deleteAction()
     {
         $id = $this->params()->fromRoute('id');
@@ -87,6 +107,11 @@ class CategoriaController extends AbstractRestfulController
 
     }
 
+    /**
+     * Função para procurar uma categoria
+     * @Post
+     *     q: String (LIKE AS)
+     */
     public function searchAction()
     {
         $request = $this->getRequest();
@@ -135,10 +160,5 @@ class CategoriaController extends AbstractRestfulController
         }
         return false;
     }
-
-
-                /** Get max id */
-            // $jsondata = file_get_contents($this->categorias);
-            // $arr_data = json_decode($jsondata, true);
 
 }
