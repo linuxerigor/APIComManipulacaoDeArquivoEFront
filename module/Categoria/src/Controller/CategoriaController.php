@@ -130,7 +130,7 @@ class CategoriaController extends AbstractRestfulController
 
         
         $arrdata = array_values(array_filter($arrdata,function($a) use($q){
-            return preg_match("/.*{$q}.*/",$a['name']);
+            return preg_match("/.*{$q}.*/i",$a['name']);
         }));
 
         return new JsonModel($arrdata);
