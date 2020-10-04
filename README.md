@@ -27,11 +27,16 @@ ESTRUTURA:
 | modified      | datetime      |
 
 
+## Acesso DEMO
+
+(http://rio.carneiro.eng.br:8090)[http://rio.carneiro.eng.br:8090]
+
 ## Sobre o código
 
 1 - Instalar as bibliotecas do zend
 ```bash
 compose install
+chmod  777 data/categorias.json
 ```
 
 2 - Executar o docker para levar o servidor web
