@@ -29,7 +29,7 @@ ESTRUTURA:
 
 ## Acesso DEMO
 
-(http://rio.carneiro.eng.br:8090)[http://rio.carneiro.eng.br:8090]
+[http://rio.carneiro.eng.br:8090](http://rio.carneiro.eng.br:8090)
 
 ## Sobre o código
 
