@@ -19,18 +19,18 @@
   <tr>
     <th scope="col">#</th>
     <th scope="col">Nome</th>
-    <th scope="col">Criado</th>
-    <th scope="col">Modificado</th>
-    <th scope="col">Ação</th>
+    <th scope="col" class="text-center">Criado</th>
+    <th scope="col" class="text-center">Modificado</th>
+    <th scope="col" class="text-center">Ação</th>
   </tr>
   </thead>
   <tbody>
     <tr *ngFor="let item of categorias; index as i">
       <th scope="row">{{ item.id }}</th>
       <td>{{ item.name }}</td>
-      <td>{{ item.created | date: 'short' : 'pt' }}</td>
-      <td>{{ item.modified | date: 'short' : 'pt' }}</td>
-      <td class="text-nowrap">
+      <td class="text-center">{{ item.created | date: 'short' : 'pt' }}</td>
+      <td class="text-center">{{ item.modified | date: 'short' : 'pt' }}</td>
+      <td class="text-nowrap text-center">
         <button (click)="onEdit(item)" class="btn btn-sm btn-primary mr-1" title="Alterar"><i class="fas fa-edit"></i></button>
         <button (click)="onDelete(item.id)" class="btn btn-sm btn-danger" title="Excluir"><i class="fas fa-trash-alt"></i></button>
       </td>

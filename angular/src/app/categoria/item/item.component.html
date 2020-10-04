@@ -1,20 +1,20 @@
   <div class="form-group" *ngIf="itemselected?.id" >
-    <label for="exampleInputEmail1">ID</label><br>
+    <label class="text-black-50">ID</label><br>
     <span class="badge badge-secondary"># {{itemselected?.id}}</span>
   </div>
 
   <div class="form-group">
-    <label for="exampleInputEmail1">Nome da categoria</label>
+    <label class="text-black-50">Nome da categoria</label>
     <input type="email" class="form-control" [formControl]="name">
   </div>
 
   <div class="form-group" *ngIf="itemselected?.created" >
-    <label for="exampleInputEmail1">Criado em</label><br>
+    <label class="text-black-50">Criado em</label><br>
     <span class="text-muted">{{itemselected.created | date: 'long' : 'pt'}}</span>
   </div>
 
   <a type="button" class="btn btn-outline-secondary float-left mt-3" routerLink="/categoria">Voltar</a>
 
-  <button (click)="salvarorchange()" class="btn btn-primary float-right mt-3" [disabled]="loading || name?.invalid" >{{ itemselected?.id ? 'alterar' : 'Adicionar'}}</button>
+  <button (click)="salvarorchange()" class="btn btn-{{(loading || name?.invalid)? 'secondary':'primary'}} float-right mt-3" [disabled]="loading || name?.invalid" >{{ itemselected?.id ? 'alterar' : 'Adicionar'}}</button>
 
   <app-toasts aria-live="polite" aria-atomic="true"></app-toasts>
