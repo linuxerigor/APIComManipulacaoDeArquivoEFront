@@ -13,20 +13,10 @@ return [
     ],
     'router' => [
         'routes' => [
-            'home' => [
-                'type'    => Literal::class,
-                'options' => [
-                    'route'    => '/',
-                    'defaults' => [
-                        'controller' => Controller\CategoriaController::class,
-                        'action'     => 'index',
-                    ],
-                ],
-            ],
             'categoria' => [
                 'type'    => Segment::class,
                 'options' => [
-                    'route' => '/categoria[/:action[/:id]]',
+                    'route' => '/api/categoria[/:action[/:id]]',
                     'constraints' => [
                         'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
                         'id'     => '[0-9]+'

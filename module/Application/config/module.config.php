@@ -17,17 +17,7 @@ return [
             'home' => [
                 'type'    => Literal::class,
                 'options' => [
-                    'route'    => '/',
-                    'defaults' => [
-                        'controller' => Controller\IndexController::class,
-                        'action'     => 'index',
-                    ],
-                ],
-            ],
-            'application' => [
-                'type'    => Segment::class,
-                'options' => [
-                    'route'    => '/application[/:action]',
+                    'route'    => '/q',
                     'defaults' => [
                         'controller' => Controller\IndexController::class,
                         'action'     => 'index',
