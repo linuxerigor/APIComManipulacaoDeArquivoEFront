@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { NgModule, LOCALE_ID } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -12,6 +12,10 @@ import { ItemComponent } from './categoria/item/item.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ToastService } from './toast.service';
 import { ToastsContainer } from './toasts-container.component';
+import { registerLocaleData } from '@angular/common';
+import localePt from '@angular/common/locales/pt';
+
+registerLocaleData(localePt, 'pt');
 
 @NgModule({
   declarations: [
@@ -28,7 +32,7 @@ import { ToastsContainer } from './toasts-container.component';
     AppRoutingModule,
     NgbModule
   ],
-  providers: [EndpointService, ToastService],
+  providers: [{ provide: LOCALE_ID, useValue: 'pt' }, EndpointService, ToastService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

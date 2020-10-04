@@ -38,3 +38,8 @@ compose install
 ```bash
 docker-compose up -d
 ```
+
+3 - Instalar as bibliotecas do Angular
+```bash
+cd angular ; npm install
+```

@@ -20,7 +20,7 @@ class CategoriaController extends AbstractRestfulController
 
     /**
      * Função para adicionar uma nova categoria
-     * @Input
+     * @Payload
      *     name: String
      */
     public function addAction()
@@ -33,7 +33,11 @@ class CategoriaController extends AbstractRestfulController
         $arrdata = $this->readCategorias();
 
         $ids = array_column($arrdata, 'id');
-        $next = (max($ids) + 1) ?? 1 ;
+        if($ids){
+            $next = (max($ids) + 1) ?? 1 ;
+        }else{
+            $next = 1;
+        }
 
         $datetime = new DateTime('NOW');
 
@@ -57,23 +61,25 @@ class CategoriaController extends AbstractRestfulController
      * Função para alterar uma categoria
      * @Input
      *     id: Int
-     * @Post
+     * @Payload
      *     name: String
      */
     public function editAction()
     {
         $id = $this->params()->fromRoute('id');
-        $request = $this->getRequest();
-        if (!$request->isPost())
-            return new JsonModel(array('error' => 'method not allowed'));    
+
+        $name = $this->request->getContent();
+        if(!$name)
+            return new JsonModel(array('error' => 'method not allowed'));   
+
         
         $arrdata = $this->readCategorias();
 
         $datetime = new DateTime('NOW');
 
-        $arrdata = array_map(function($k) use ($request, $id, $datetime){
+        $arrdata = array_map(function($k) use ($name, $id, $datetime){
             if($id == $k['id']){
-                $k['name'] = $request['name'];
+                $k['name'] = $name;
                 $k['modified'] = $datetime->format('Y-m-d H:i:s');
             }
             return $k;
@@ -96,48 +102,56 @@ class CategoriaController extends AbstractRestfulController
         $id = $this->params()->fromRoute('id');
         $arrdata = $this->readCategorias();
 
-        $arrdata = array_filter($arrdata,function($a) use($id){
-            return ($id != $a['id'])? $id : false;
-        });
+        $arrdata = array_values(array_filter($arrdata,function($a) use($id){
+            return ($id != $a['id'])? true : false;
+        }));
 
+       
         if($this->storeCategorias($arrdata)){
-            return new JsonModel(array('success' => "Categoria deletada com sucesso"));
+          return new JsonModel(array('success' => "Categoria deletada com sucesso"));
         }else{
-            return new JsonModel(array('error' => 'Erro ao deletar categoria'));    
+           return new JsonModel(array('error' => 'Erro ao deletar categoria'));    
         }
 
     }
 
     /**
      * Função para procurar uma categoria
-     * @Post
+     * @Payload
      *     q: String (LIKE AS)
      */
     public function searchAction()
     {
-        $request = $this->getRequest();
-        if (!$request->isPost())
-           return new JsonModel(array('error' => 'method not allowed'));    
+        $q = $this->request->getContent();
+        if(!$q)
+            return new JsonModel(array('error' => 'method not allowed'));   
         
         $arrdata = $this->readCategorias();
 
-        $arrdata = array_filter($arrdata,function($a) use($request){
-            return preg_match("/.*{$request['q']}.*/",$a['name']);
-        });
+        
+        $arrdata = array_values(array_filter($arrdata,function($a) use($q){
+            return preg_match("/.*{$q}.*/",$a['name']);
+        }));
 
-        return new JsonModel(array('query' => $this->params()->fromRoute('q') ,'result' => $arrdata));
+        return new JsonModel($arrdata);
+        //return new JsonModel(array('query' => $this->params()->fromRoute('q') ,'result' => $arrdata));
     }
 
     /**
      * Função para ler do arquivo json
      */
+
     private function readCategorias(){
         try {
             $jsondata = file_get_contents($this->categoriaspath);
             $data = json_decode($jsondata, true);
-
             if(!is_array($data))
                     $data = [];
+
+            /* ordena pelo nome */
+            usort($data, function($a, $b){
+                return strcmp($a['name'], $b['name']);
+            } );
 
             return $data;
         } catch (\InvalidArgumentException $e) {

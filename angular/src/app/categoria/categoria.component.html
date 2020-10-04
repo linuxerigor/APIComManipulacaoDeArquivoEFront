@@ -1,11 +1,24 @@
 
-<a type="button" class="btn btn-primary float-right mb-3" routerLink="/categoria/add">Adicionar</a>
 
-<ngb-alert *ngIf="loading" type="secondary">
-  <strong>À carregar</strong> aguarde!
+
+
+<div class="spinner-border" role="status" *ngIf="loading">
+  <span class="sr-only">À carregar...</span>
+</div>
+
+<ngb-alert *ngIf="!loading && !categorias" type="secondary">
+  Nenhuma categoria registrada
 </ngb-alert>
 
-<table class="table table-striped" *ngIf="!loading" >
+
+<div class="input-group input-group-sm mb-3 float-right col-6">
+  <input type="text" class="form-control" placeholder="..." [formControl]="searchfield" (keyup)="onSearch()">
+  <div class="input-group-append">
+    <button class="btn btn-outline-secondary" type="button" (click)="onSearch()" >Procurar</button>
+  </div>
+</div>
+
+<table class="table table-striped" >
   <thead>
   <tr>
     <th scope="col">#</th>
@@ -17,11 +30,16 @@
   </thead>
   <tbody>
     <tr *ngFor="let item of categorias; index as i">
-      <th scope="row"><a role="button" routerLink="" (click)="edit(item)">{{ item.id }}</a></th>
+      <th scope="row">{{ item.id }}</th>
       <td>{{ item.name }}</td>
-      <td>{{ item.created }}</td>
-      <td>{{ item.modified }}</td>
-      <td></td>
+      <td>{{ item.created | date: 'short' : 'pt' }}</td>
+      <td>{{ item.modified | date: 'short' : 'pt' }}</td>
+      <td>
+        <button (click)="onEdit(item)" class="btn btn-sm btn-primary mr-2" title="Alterar"><i class="fas fa-edit"></i></button>
+        <button (click)="onDelete(item.id)" class="btn btn-sm btn-danger" title="Excluir"><i class="fas fa-trash-alt"></i></button>
+      </td>
     </tr>
   </tbody>
 </table>
+
+<a type="button" class="btn btn-primary float-right mb-3" routerLink="/categoria/add">Adicionar</a>
