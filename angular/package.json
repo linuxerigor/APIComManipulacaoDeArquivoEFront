@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve --proxy-config proxy.config.js",
-    "build": "ng build   --base-href=/APIParaGestaoDeCategorias/ && cp -fr dist/APIParaGestaoDeCategorias/* ../public/APIParaGestaoDeCategorias && cat dist/APIParaGestaoDeCategorias/index.html > ../module/Application/view/layout/layout.phtml",
+    "build": "ng build --prod --base-href=\"/APIParaGestaoDeCategorias/\" && cp -fr dist/APIParaGestaoDeCategorias/* ../public/APIParaGestaoDeCategorias && cat dist/APIParaGestaoDeCategorias/index.html > ../module/Application/view/layout/layout.phtml",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"

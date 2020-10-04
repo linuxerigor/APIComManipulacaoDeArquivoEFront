@@ -8,5 +8,5 @@ import { Component } from '@angular/core';
 export class AppComponent {
   public isCollapsed = true;
 
-  title = 'APIParaGestaoDeCategorias';
+  title = 'API Para Gestao De Categorias';
 }

@@ -1,11 +1,11 @@
-import { Time } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { EndpointService } from '../endpoint.service';
 import { Categoria } from '../categoria';
-import { take } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, filter, take } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { ToastService } from '../toast.service';
 import { FormControl } from '@angular/forms';
+
 
 @Component({
   selector: 'app-categoria',
@@ -16,7 +16,6 @@ export class CategoriaComponent implements OnInit {
 
   categorias: Categoria;
   loading = false;
-
   searchfield = new FormControl('');
 
   constructor(private endpoint: EndpointService,
@@ -24,7 +23,16 @@ export class CategoriaComponent implements OnInit {
               private router: Router) { }
 
   ngOnInit(): void {
-    this.fillCategorias();
+
+        this.fillCategorias();
+
+        this.searchfield.valueChanges.pipe(
+          debounceTime(300),
+          distinctUntilChanged()
+        ).subscribe((text: string) => {
+          this.fillCategorias(text);
+        });
+
   }
 
   fillCategorias(q = null){
@@ -42,9 +50,7 @@ export class CategoriaComponent implements OnInit {
   }
 
   onDelete( id: number ){
-
     this.loading = true;
-
     this.endpoint.deletecategoria(id).pipe(take(1)).subscribe(
       (result: any) => {
         this.loading = false;

@@ -31,9 +31,9 @@ export class ItemComponent implements OnInit {
 
       if (!this.itemselected) {
         this.router.navigate(['/categoria']);
+      }else{
+        this.name.setValue(this.itemselected.name);
       }
-
-      this.name.setValue(this.itemselected.name);
 
     }
 

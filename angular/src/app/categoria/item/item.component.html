@@ -1,6 +1,6 @@
   <div class="form-group" *ngIf="itemselected?.id" >
-    <label for="exampleInputEmail1">ID</label>
-    <input type="email"  [value]="itemselected?.id" disabled readonly class="form-control-plaintext">
+    <label for="exampleInputEmail1">ID</label><br>
+    <span class="badge badge-secondary"># {{itemselected?.id}}</span>
   </div>
 
   <div class="form-group">
